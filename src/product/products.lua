@@ -1,18 +1,32 @@
-local Product = require("product.product_abc")
+Product = require("product.product_abc")
 
-local products = {
-    Product:new("grain", 10),
-    Product:new("clothes", 20),
-    Product:new("furniture", 50)
-}
+ProductRegistry = {}
+ProductRegistry.__index = ProductRegistry
 
-function GetProduct(id)
+function ProductRegistry:new(products)
+    local obj = {
+        list_data = products,
+        by_id = {}
+    }
+    setmetatable(obj, ProductRegistry)
+
     for _, product in ipairs(products) do
-        if product.id == id then
-            return product
-        end
+        obj.by_id[product.id] = product
     end
-    return nil
+
+    return obj
 end
 
-return products
+function ProductRegistry:get(id)
+    return self.by_id[id]
+end
+
+function ProductRegistry:list()
+    return self.list_data
+end
+
+GH_MODULES["product.products"] = ProductRegistry:new({
+    Product:new("grain", "food", 10),
+    Product:new("clothes", "clothing", 20),
+    Product:new("furniture", "household", 50)
+})

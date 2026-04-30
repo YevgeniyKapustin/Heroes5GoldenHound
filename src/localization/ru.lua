@@ -1,5 +1,5 @@
-return {
-    product_grain = "Зерно",
-    product_clothes = "Одежда",
-    product_furniture = "Мебель"
+GH_MODULES["localization.ru"] = {
+    product_grain = "Zerno",
+    product_clothes = "Odezhda",
+    product_furniture = "Mebel"
 }

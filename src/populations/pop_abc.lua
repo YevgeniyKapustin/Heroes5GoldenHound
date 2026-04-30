@@ -1,4 +1,6 @@
-local Pop = {}
+Logger = require("logger")
+
+Pop = {}
 Pop.__index = Pop
 
 function Pop:new(id, profession_id, size, needs, priorities)
@@ -21,6 +23,7 @@ end
 
 function Pop:receiveIncome(amount)
     self.income = self.income + amount
+    Logger:info("Income received")
 end
 
 function Pop:getDemand()
@@ -33,44 +36,34 @@ function Pop:getDemand()
     return demand
 end
 
-function Pop:consume(market)
-    local demand = self:getDemand()
-
-    for _, product_id in ipairs(self.priorities) do
-        local need_type = market:getProductCategory(product_id)
-        local required = demand[need_type]
-
-        if required and required > 0 then
-            local price = market:getPrice(product_id)
-            local affordable = math.min(required, self.income / price)
-
-            if affordable > 0 then
-                market:buy(product_id, affordable)
-                self.income = self.income - affordable * price
-                demand[need_type] = demand[need_type] - affordable
-            end
-        end
-    end
-end
-
 function Pop:buyNeeds(market, productRegistry)
     local demand = self:getDemand()
+    Logger:info("Pop starts buying")
 
     for _, product_id in ipairs(self.priorities) do
-        local product = productRegistry[product_id]
-        local need_type = product.category
-        local required = demand[need_type]
+        local product = productRegistry:get(product_id)
+        if product then
+            local need_type = product.category
+            local required = demand[need_type]
 
-        if required and required > 0 then
-            local price = market:getPrice(product)
-            local affordable = math.min(required, self.income / price)
+            if required and required > 0 then
+                local price = market:getPrice(product)
+                local affordable = required
 
-            if affordable > 0 then
-                local bought = market:buy(product_id, affordable)
-                self.income = self.income - bought * price
-                demand[need_type] = demand[need_type] - bought
+                if price > 0 then
+                    if self.income / price < required then
+                        affordable = self.income / price
+                    end
+                end
+
+                if affordable > 0 then
+                    local bought = market:buy(product_id, affordable)
+                    self.income = self.income - bought * price
+                    demand[need_type] = demand[need_type] - bought
+                end
             end
         end
     end
 end
 
+GH_MODULES["populations.pop_abc"] = Pop

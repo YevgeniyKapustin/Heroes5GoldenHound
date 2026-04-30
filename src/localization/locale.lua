@@ -1,4 +1,4 @@
-local Locale = {
+Locale = {
     current = "en",
     languages = {}
 }
@@ -19,4 +19,4 @@ function Locale:get(id)
     return id
 end
 
-return Locale
+GH_MODULES["localization.locale"] = Locale

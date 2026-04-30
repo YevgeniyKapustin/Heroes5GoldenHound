@@ -1,7 +1,10 @@
-local landlord = Profession:new("landlord", "Landlord", 0.4, 10)
-local farmer   = Profession:new("farmer",   "Farmer",   0.6, 90)
+BuildingType = require("buildings.building_abc")
+Profession = require("populations.professions")
 
-local SubsistenceFarmType = BuildingType:new(
+landlord = Profession:new("landlord", "Landlord", 0.4, 10)
+farmer = Profession:new("farmer", "Farmer", 0.6, 90)
+
+GH_MODULES["buildings.types.substance_farm"] = BuildingType:new(
     "subsistence_farm",
     "Subsistence Farm",
     { landlord, farmer },

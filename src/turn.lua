@@ -1,26 +1,36 @@
-function ProcessTurn(buildings, pops, market, products)
-    -- 1. Здания производят товары
+Logger = require("logger")
+
+Turn = {}
+
+function Turn.process(buildings, pops, market, productRegistry)
+    Logger:info("Turn process phase: production")
+
     for _, building in ipairs(buildings) do
         building:deliverToMarket(market)
     end
 
-    -- 2. POP’ы получают доход
+    Logger:info("Turn process phase: income distribution")
+
     for _, building in ipairs(buildings) do
-        local income = building:getIncome()
+        local income = building:getIncome(market, productRegistry)
         local distribution = building:distributeIncome(income)
 
         for _, pop in ipairs(pops) do
-            if distribution[pop.profession_id] then
-                pop:receiveIncome(distribution[pop.profession_id])
+            local share = distribution[pop.profession_id]
+            if share then
+                pop:receiveIncome(share)
             end
         end
     end
 
-    -- 3. POP’ы покупают товары
+    Logger:info("Turn process phase: consumption")
+
     for _, pop in ipairs(pops) do
-        pop:buyNeeds(market, products)
+        pop:buyNeeds(market, productRegistry)
     end
 
-    -- 4. Обновляем цены
-    market:updatePrices(products)
+    Logger:info("Turn process phase: pricing")
+    market:updatePrices(productRegistry:list())
 end
+
+GH_MODULES["turn"] = Turn

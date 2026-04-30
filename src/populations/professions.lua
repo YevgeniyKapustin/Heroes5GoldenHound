@@ -1,4 +1,4 @@
-local Profession = {}
+Profession = {}
 Profession.__index = Profession
 
 function Profession:new(id, display_name, income_share, required_workers)
@@ -12,4 +12,4 @@ function Profession:new(id, display_name, income_share, required_workers)
     return obj
 end
 
-return Profession
+GH_MODULES["populations.professions"] = Profession

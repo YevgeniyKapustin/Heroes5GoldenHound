@@ -1,4 +1,4 @@
-local Building = {}
+Building = {}
 Building.__index = Building
 
 function Building:new(id, name, professions, produces)
@@ -12,4 +12,4 @@ function Building:new(id, name, professions, produces)
     return obj
 end
 
-return Building
+GH_MODULES["buildings.building_abc"] = Building
